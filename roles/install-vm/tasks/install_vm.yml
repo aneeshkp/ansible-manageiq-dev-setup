@@ -1,0 +1,9 @@
+---
+- name: copy vagrant file
+  template: src=Vagrantfile.j2 dest=~/manageiq_vm/Vagrantfile
+
+- name: vagrant up
+  shell: >
+    cd ~/manageiq_vm;vagrant up
+    new_ip=$(vagrant ssh -c "ip address show eth0 | grep 'inet ' | sed -e 's/^.*inet //' -e 's/\/.*$//'")
+
