@@ -6,3 +6,11 @@
 
   roles:
     - install-vm
+
+- name: install manageiq
+  hosts: manageiq-vm  
+  remote_user: vagrant
+  #connection: local
+
+  roles:
+    - install-manageiq

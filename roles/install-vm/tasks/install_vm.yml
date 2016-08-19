@@ -4,6 +4,22 @@
 
 - name: vagrant up
   shell: >
-    cd ~/manageiq_vm;vagrant up
-    new_ip=$(vagrant ssh -c "ip address show eth0 | grep 'inet ' | sed -e 's/^.*inet //' -e 's/\/.*$//'")
+    cd ~/manageiq_vm;vagrant up;
+    vagrant ssh -c "ip address show eth0 | grep 'inet ' | sed -e 's/^.*inet //' -e 's/\/.*$//'"
+  register: vm_ipaddress
 
+- name: allow password auth for ssh
+  shell: >
+    cd ~/manageiq_vm;
+    vagrant ssh -c "sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config";
+    vagrant ssh -c "sudo systemctl restart sshd"
+
+- name: add vm to manageiq-vm host group
+  add_host:
+    name: "{{ vm_ipaddress.stdout_lines[0] }}"
+    groups: manageiq-vm
+    ansible_host: "{{ vm_ipaddress.stdout_lines[0] }}"
+    ansible_user: vagrant
+    ansible_ssh_pass: vagrant
+    #ansible_ssh_private_key_file: "{{ vm_key.stdout }}"
+    ansible_become: true

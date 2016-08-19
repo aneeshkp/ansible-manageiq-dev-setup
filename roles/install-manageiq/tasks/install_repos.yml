@@ -1,0 +1,34 @@
+---
+#- name: install dnf
+#  yum: name=dnf state=present
+#- name: downloading dependency
+#  dnf: name=http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-1.noarch.rpm  state=present
+  
+
+- name: install manageiq dependency
+  dnf: name={{ item }} state=present
+  with_items:
+   - install git-all
+   - memcached
+   - postgresql-devel
+   - postgresql-server
+   - libxml2-devel 
+   - libxslt-devel
+   - patch
+   - nodejs 
+   - libcurl-devel
+   - openssl-devel
+   - cmake
+
+- name: install nodejs      
+  shell: "sudo curl --silent --location https://rpm.nodesource.com/setup | bash -"
+
+- name: install bower
+  npm: name=bower global=yes
+
+- name: Enable memcached
+  shell : "sudo systemctl enable memcached"
+
+- name: start memcached
+  shell : "sudo systemctl start memcached"
+
