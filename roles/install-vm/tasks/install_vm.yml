@@ -29,4 +29,4 @@
     ansible_user: vagrant
     ansible_ssh_pass: vagrant
     #ansible_ssh_private_key_file: "{{ vm_key.stdout }}"
-    ansible_become: true
+    #ansible_become: true

@@ -1,3 +1,6 @@
 ---
 - include: install_repos.yml
+- include: configure_postgres.yml
+- include: rvm_ruby_install.yml
+- include: install_manageiq_src.yml
 

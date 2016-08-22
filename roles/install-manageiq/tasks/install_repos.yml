@@ -1,34 +1,66 @@
 ---
+
+#- name: install python and deps for ansible modules
+#  shell: >
+#    dnf install -y python2; python2-dnf libselinux-python
+
+- name: downloading dependency
+  yum: name=http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-1.noarch.rpm  state=present
+  become: true
+  become_user: root
+
+- name: downloading dependency repo
+  yum: name=http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
+  become: true
+  become_user: root
+
+
+#- name: python dnf
+#  dnf: name=python2-dnf state=present
+
 #- name: install dnf
 #  yum: name=dnf state=present
-#- name: downloading dependency
-#  dnf: name=http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-1.noarch.rpm  state=present
-  
+
 
 - name: install manageiq dependency
-  dnf: name={{ item }} state=present
+  yum: name={{ item }} state=present
   with_items:
-   - install git-all
+   - git-all
    - memcached
    - postgresql-devel
    - postgresql-server
    - libxml2-devel 
    - libxslt-devel
    - patch
-   - nodejs 
+   - python-pip
+   - nodejs
    - libcurl-devel
    - openssl-devel
+   - npm
    - cmake
+  become: true
+  become_user: root
 
-- name: install nodejs      
-  shell: "sudo curl --silent --location https://rpm.nodesource.com/setup | bash -"
+- name: pip install pexpect
+  command: pip install pexpect
+  become: true
+  become_user: root
+
+#- name: install nodejs      
+#  shell: "sudo curl --silent --location https://rpm.nodesource.com/setup | bash -"
 
 - name: install bower
   npm: name=bower global=yes
+  become: true
+  become_user: root
 
 - name: Enable memcached
-  shell : "sudo systemctl enable memcached"
+  shell: "systemctl enable memcached"
+  become: true
+  become_user: root
 
 - name: start memcached
-  shell : "sudo systemctl start memcached"
+  shell: "systemctl start memcached"
+  become: true
+  become_user: root
 

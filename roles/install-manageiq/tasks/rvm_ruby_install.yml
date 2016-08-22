@@ -1,0 +1,57 @@
+---
+- name: append rvm path to environment
+  lineinfile: dest=/etc/environment state=present backrefs=yes regexp='PATH=(["]*)((?!.*?{{rvm_path}}).*?)(["]*)$' line="PATH=\1\2:{{rvm_path}}\3"
+  become: yes
+  become_user: root
+
+- name: ensure necessary packages are installed
+  yum: name={{ item }} state=present
+  with_items:
+   - curl
+   - gnupg2
+  become: yes
+  become_user: root
+
+    
+
+- name: ensure that GPG key for RVM is installed
+  command: gpg2 --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
+  #args:
+  #  creates: /root/.gnupg/secring.gpg
+  #become: yes
+  #become_user: root
+
+
+- name: ensure that RVM is installed
+  shell: curl -L get.rvm.io | bash -s stable
+  #args:
+  #  creates: /usr/local/rvm
+  #become: yes
+  #become_user: root
+   
+
+- name: ensure that ruby is installed
+  command: "rvm install {{ ruby_version }}"
+  #args:
+  #  creates: "/usr/local/rvm/gems/ruby-{{ ruby_version }}"
+  environment:
+    PATH: "{{ rvm_path }}:{{ ansible_env.PATH }}"
+  #become: yes
+  #become_user: root
+
+- name: set default version of ruby with rvm
+  command: "rvm alias create default ruby-{{ ruby_version }}"
+  #args:
+  #  creates: /usr/local/rvm/config/alias
+  environment:
+    PATH: "{{ rvm_path }}:{{ ansible_env.PATH }}"
+  #become: yes
+  #become_user: root
+
+- name: Change permission
+  command: sudo chmod -R 777 /usr/local/rvm/gems/ruby-{{ ruby_version }}
+
+
+- name: install bundler
+  command: bash -lc "gem install bundler"
+  
