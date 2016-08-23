@@ -31,25 +31,23 @@
    
 
 - name: ensure that ruby is installed
-  command: "rvm install {{ ruby_version }}"
-  #args:
-  #  creates: "/usr/local/rvm/gems/ruby-{{ ruby_version }}"
+  shell: >
+      source {{ansible_env.HOME}}/.rvm/scripts/rvm;
+      {{ansible_env.HOME}}/.rvm/bin/rvm install {{ ruby_version }}
   environment:
     PATH: "{{ rvm_path }}:{{ ansible_env.PATH }}"
   #become: yes
   #become_user: root
 
 - name: set default version of ruby with rvm
-  command: "rvm alias create default ruby-{{ ruby_version }}"
-  #args:
-  #  creates: /usr/local/rvm/config/alias
+  shell: >
+      source {{ansible_env.HOME}}/.rvm/scripts/rvm;
+      {{ansible_env.HOME}}/.rvm/bin/rvm alias create default ruby-{{ ruby_version }}
   environment:
     PATH: "{{ rvm_path }}:{{ ansible_env.PATH }}"
-  #become: yes
-  #become_user: root
 
-- name: Change permission
-  command: sudo chmod -R 777 /usr/local/rvm/gems/ruby-{{ ruby_version }}
+#- name: Change permission
+#  command: chmod -R 777 /usr/local/rvm/gems/ruby-{{ ruby_version }}
 
 
 - name: install bundler

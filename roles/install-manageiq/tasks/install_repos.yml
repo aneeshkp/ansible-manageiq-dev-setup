@@ -20,15 +20,20 @@
 
 #- name: install dnf
 #  yum: name=dnf state=present
-
+- name: install manageiq dependency
+  yum: name=postgresql* state=absent
+  ignore_errors: yes
+  become: true
+  become_user: root
 
 - name: install manageiq dependency
   yum: name={{ item }} state=present
   with_items:
    - git-all
    - memcached
-   - postgresql-devel
-   - postgresql-server
+   - postgresql94
+   - postgresql94-devel
+   - postgresql94-server
    - libxml2-devel 
    - libxslt-devel
    - patch

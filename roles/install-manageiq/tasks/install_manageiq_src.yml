@@ -1,25 +1,47 @@
 ---
 - name: Install manageIQ from Github
-  git: repo=https://github.com/Ladas/manageiq.git version=VNF_demo_updated dest=/home/vagrant/manageiq
-  
+  git: repo=https://github.com/Ladas/manageiq.git version=VNF_demo_updated dest={{ansible_env.HOME}}/manageiq
 
-- name:  run bundler Install
-  shell: >
-   cd /home/vagrant/manageiq;
-   bundle install
-  become_user: vagrant
 
-- name: Run mnageIQ setup
+- name: Add Git config
   shell: >
-   cd /home/vagrant/manageiq;
-   git remote add upstream git@github.com:ManageIQ/manageiq.git;
+   cd {{ansible_env.HOME}}/manageiq;
+   git config user.name "Billy Everyteen";
+   git config user.email "Billy@manageiq-devel.com"   
+
+- name: Add Git Upstream
+  shell: >
+   cd {{ansible_env.HOME}}/manageiq;
+   git remote add upstream https://github.com/ManageIQ/manageiq.git;
+  register: git_upstream_result
+  failed_when: (git_upstream_result.stderr!="" and "remote upstream already exists" not in git_upstream_result.stderr)
+ 
+ 
+- name: rebase mnageIQ project
+  shell: >
+   cd {{ansible_env.HOME}}/manageiq;
    git fetch upstream;
    git rebase upstream/master;
-   bin/setup
+
+- name:  config bundle 
+  command: bash -lc "bundle config build.pg --with-pg-config=/usr/pgsql-9.4/bin/pg_config"
+
+- name:  run bundler Install
+  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && bundle install"
+  
+- name:  run bundler update
+  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && bundle update"
+
+- name: Run mnageIQ setup
+  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && {{ansible_env.HOME}}/.rvm/rubies/ruby-{{ruby_version}}/bin/ruby bin/setup"
+
+#- name:  run bundler Update
+#  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && bundle update"
 
 - name: start manageiq
-  shell: >
-   bundle exec rake evm:start;
+  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && bundle exec rake evm:start" 
+  #shell: >
+   #bundle exec rake evm:start;
 
 
 
