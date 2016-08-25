@@ -1,5 +1,6 @@
 ---
-ansible_ssh_common_args: '-o ProxyCommand="ssh -v -W %h:%p -q root@10.8.125.12" -o StrictHostKeyChecking=no'
+vm_host_ip: "{{ hostvars[groups['vm_host'][0]]['ansible_default_ipv4']['address'] }}"
+ansible_ssh_common_args: '-o ProxyCommand="ssh -v -W %h:%p -q root@{{ vm_host_ip }}" -o StrictHostKeyChecking=no'
 
 ruby_version: "2.2.4"
 rvm_path: "/usr/local/rvm/gems/ruby-{{ ruby_version }}/bin:/usr/local/rvm/gems/ruby-{{ ruby_version }}@global/bin:/usr/local/rvm/rubies/ruby-{{ ruby_version }}/bin:/usr/local/rvm/bin;/home/vagrant/.rvm/bin"
