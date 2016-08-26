@@ -12,34 +12,64 @@
 - name: Add Git Upstream
   shell: >
    cd {{ansible_env.HOME}}/manageiq;
-   git remote add upstream https://github.com/ManageIQ/manageiq.git;
+   git remote add upstream https://github.com/ManageIQ/manageiq.git
   register: git_upstream_result
   failed_when: (git_upstream_result.stderr!="" and "remote upstream already exists" not in git_upstream_result.stderr)
+
  
  
 - name: rebase mnageIQ project
   shell: >
-   cd {{ansible_env.HOME}}/manageiq;
    git fetch upstream;
    git rebase upstream/master;
+  args:
+   chdir: "{{ansible_env.HOME}}/manageiq"
 
 - name:  config bundle 
-  command: bash -lc "bundle config build.pg --with-pg-config=/usr/pgsql-9.4/bin/pg_config"
+  shell: >
+   source {{ansible_env.HOME}}/.rvm/scripts/rvm;
+   bash -lc "bundle config build.pg --with-pg-config=/usr/pgsql-9.4/bin/pg_config"
+  environment:
+    PATH: "{{ rvm_path }}:{{ ansible_env.PATH }}"
 
 - name:  run bundler Install
-  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && bundle install"
+  shell: >
+    source {{ansible_env.HOME}}/.rvm/scripts/rvm;
+    bash -lc "bundle install"
+  args:
+   chdir: "{{ansible_env.HOME}}/manageiq"
+  environment:
+    PATH: "{{ rvm_path }}:{{ ansible_env.PATH }}"
   
 - name:  run bundler update
-  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && bundle update"
+  shell: >
+    source {{ansible_env.HOME}}/.rvm/scripts/rvm;
+    bash -lc "bundle update"
+  args:
+   chdir: "{{ansible_env.HOME}}/manageiq"
+  environment:
+    PATH: "{{ rvm_path }}:{{ ansible_env.PATH }}"
 
 - name: Run mnageIQ setup
-  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && {{ansible_env.HOME}}/.rvm/rubies/ruby-{{ruby_version}}/bin/ruby bin/setup"
+  shell: >
+   source {{ansible_env.HOME}}/.rvm/scripts/rvm;
+   bash -lc "{{ansible_env.HOME}}/.rvm/rubies/ruby-{{ruby_version}}/bin/ruby bin/setup"
+  args:
+   chdir: "{{ansible_env.HOME}}/manageiq"
+  environment:
+   PATH: "{{ rvm_path }}:{{ ansible_env.PATH }}"
 
 #- name:  run bundler Update
 #  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && bundle update"
 
 - name: start manageiq
-  command: bash -lc "cd {{ansible_env.HOME}}/manageiq && bundle exec rake evm:start" 
+  shell: >
+   source {{ansible_env.HOME}}/.rvm/scripts/rvm;
+   bash -lc "bundle exec rake evm:start" 
+  args:
+    chdir: "{{ansible_env.HOME}}/manageiq"
+  environment:
+    PATH: "{{ rvm_path }}:{{ ansible_env.PATH }}"
   #shell: >
    #bundle exec rake evm:start;
 

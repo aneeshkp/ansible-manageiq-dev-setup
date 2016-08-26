@@ -20,7 +20,7 @@
 
 #- name: install dnf
 #  yum: name=dnf state=present
-- name: install manageiq dependency
+- name: remove postgres
   yum: name=postgresql* state=absent
   ignore_errors: yes
   become: true
