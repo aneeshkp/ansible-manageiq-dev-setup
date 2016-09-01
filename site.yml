@@ -1,15 +1,15 @@
 ---
 
-- name: install VM
-  hosts: vm_host
-  remote_user: root
+#- name: install VM
+#  hosts: vm_host
+#  remote_user: root
 
-  roles:
-    - install-vm
+#  roles:
+#    - install-vm
 
 - name: install manageiq
   hosts: manageiq-vm  
-  remote_user: vagrant
+  remote_user: cloud-user
   #connection: local
 
   roles:

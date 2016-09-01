@@ -4,15 +4,15 @@
 #  shell: >
 #    dnf install -y python2; python2-dnf libselinux-python
 
-- name: downloading dependency
-  yum: name=http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-1.noarch.rpm  state=present
-  become: true
-  become_user: root
+#- name: downloading dependency
+#  yum: name=http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-1.noarch.rpm  state=present
+#  become: true
+#  become_user: root
 
-- name: downloading dependency repo
-  yum: name=http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
-  become: true
-  become_user: root
+#- name: downloading dependency repo
+#  yum: name=http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm state=present
+#  become: true
+#  become_user: root
 
 
 #- name: python dnf
@@ -22,6 +22,18 @@
 #  yum: name=dnf state=present
 - name: remove postgres
   yum: name=postgresql* state=absent
+  ignore_errors: yes
+  become: true
+  become_user: root
+
+- name: remove nodejs
+  yum: name=nodejs* state=absent
+  ignore_errors: yes
+  become: true
+  become_user: root
+
+- name: remove nodesource
+  yum: name=nodesource state=absent
   ignore_errors: yes
   become: true
   become_user: root
