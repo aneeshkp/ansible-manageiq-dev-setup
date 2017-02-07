@@ -21,7 +21,8 @@
 - name: rebase mnageIQ project
   shell: >
    git fetch upstream;
-   git rebase upstream/master;
+   git rebase -s recursive -X ours upstream/euwe;
+   git pull -X theirs 
   args:
    chdir: "{{ansible_env.HOME}}/manageiq"
 
